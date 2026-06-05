@@ -19,3 +19,10 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Add mavenLocal so the locally-built wallet-core AAR is resolvable
+allprojects {
+    repositories {
+        mavenLocal()
+    }
+}
