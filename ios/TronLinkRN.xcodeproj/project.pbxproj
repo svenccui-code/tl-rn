@@ -12,6 +12,8 @@
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		7BD5941449569E659095B904 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A1B2C3D4E5F6012345678914 /* SecureKeyringCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678913 /* SecureKeyringCoreTests.swift */; };
+		A1B2C3D4E5F6012345678918 /* libPods-TronLinkRNTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678917 /* libPods-TronLinkRNTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,11 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-TronLinkRN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TronLinkRN.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TronLinkRN/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TronLinkRN/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A1B2C3D4E5F601234567890B /* TronLinkRNTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TronLinkRNTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F6012345678913 /* SecureKeyringCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureKeyringCoreTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6012345678915 /* Pods-TronLinkRNTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TronLinkRNTests.debug.xcconfig"; path = "Target Support Files/Pods-TronLinkRNTests/Pods-TronLinkRNTests.debug.xcconfig"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6012345678916 /* Pods-TronLinkRNTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TronLinkRNTests.release.xcconfig"; path = "Target Support Files/Pods-TronLinkRNTests/Pods-TronLinkRNTests.release.xcconfig"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6012345678917 /* libPods-TronLinkRNTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TronLinkRNTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -33,6 +40,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-TronLinkRN.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B2C3D4E5F601234567890D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6012345678918 /* libPods-TronLinkRNTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,6 +71,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-TronLinkRN.a */,
+				A1B2C3D4E5F6012345678917 /* libPods-TronLinkRNTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -71,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A /* TronLinkRN */,
+				A1B2C3D4E5F6012345678912 /* TronLinkRNTests */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -85,8 +102,17 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* TronLinkRN.app */,
+				A1B2C3D4E5F601234567890B /* TronLinkRNTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F6012345678912 /* TronLinkRNTests */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6012345678913 /* SecureKeyringCoreTests.swift */,
+			);
+			path = TronLinkRNTests;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -94,6 +120,8 @@
 			children = (
 				3B4392A12AC88292D35C810B /* Pods-TronLinkRN.debug.xcconfig */,
 				5709B34CF0A7D63546082F79 /* Pods-TronLinkRN.release.xcconfig */,
+				A1B2C3D4E5F6012345678915 /* Pods-TronLinkRNTests.debug.xcconfig */,
+				A1B2C3D4E5F6012345678916 /* Pods-TronLinkRNTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -122,6 +150,25 @@
 			productReference = 13B07F961A680F5B00A75B9A /* TronLinkRN.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A1B2C3D4E5F601234567890A /* TronLinkRNTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F601234567890F /* Build configuration list for PBXNativeTarget "TronLinkRNTests" */;
+			buildPhases = (
+				A1B2C3D4E5F6012345678919 /* [CP] Check Pods Manifest.lock */,
+				A1B2C3D4E5F601234567890C /* Sources */,
+				A1B2C3D4E5F601234567890D /* Frameworks */,
+				A1B2C3D4E5F601234567890E /* Resources */,
+				BC68BD167E2FD44BD935D3A7 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TronLinkRNTests;
+			productName = TronLinkRNTests;
+			productReference = A1B2C3D4E5F601234567890B /* TronLinkRNTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -132,6 +179,11 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
+					};
+					A1B2C3D4E5F601234567890A = {
+						CreatedOnToolsVersion = 12.1;
+						LastSwiftMigration = 1120;
+						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 				};
 			};
@@ -149,6 +201,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* TronLinkRN */,
+				A1B2C3D4E5F601234567890A /* TronLinkRNTests */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +214,13 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				7BD5941449569E659095B904 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B2C3D4E5F601234567890E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +258,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TronLinkRN/Pods-TronLinkRN-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1B2C3D4E5F6012345678919 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TronLinkRNTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BC68BD167E2FD44BD935D3A7 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TronLinkRNTests/Pods-TronLinkRNTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TronLinkRNTests/Pods-TronLinkRNTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TronLinkRNTests/Pods-TronLinkRNTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
@@ -247,6 +346,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B2C3D4E5F601234567890C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6012345678914 /* SecureKeyringCoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +574,49 @@
 			};
 			name = Release;
 		};
+		A1B2C3D4E5F6012345678910 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1B2C3D4E5F6012345678915 /* Pods-TronLinkRNTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = TronLinkRNTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.TronLinkRN.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TronLinkRN.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TronLinkRN";
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F6012345678911 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1B2C3D4E5F6012345678916 /* Pods-TronLinkRNTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = TronLinkRNTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.TronLinkRN.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TronLinkRN.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TronLinkRN";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -484,6 +634,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F601234567890F /* Build configuration list for PBXNativeTarget "TronLinkRNTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F6012345678910 /* Debug */,
+				A1B2C3D4E5F6012345678911 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

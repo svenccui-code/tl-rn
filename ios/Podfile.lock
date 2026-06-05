@@ -1854,6 +1854,13 @@ PODS:
     - React-utils (= 0.84.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.84.1)
+  - TrustWalletCore (4.6.13):
+    - TrustWalletCore/Core (= 4.6.13)
+  - TrustWalletCore/Core (4.6.13):
+    - TrustWalletCore/Types
+  - TrustWalletCore/Types (4.6.13):
+    - WalletCoreSwiftProtobuf
+  - WalletCoreSwiftProtobuf (1.29.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1931,7 +1938,13 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
+  - TrustWalletCore
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+SPEC REPOS:
+  trunk:
+    - TrustWalletCore
+    - WalletCoreSwiftProtobuf
 
 EXTERNAL SOURCES:
   FBLazyVector:
@@ -2158,8 +2171,10 @@ SPEC CHECKSUMS:
   ReactCodegen: 797de5178718324c6eba3327b07f9a423fbd5787
   ReactCommon: 07572bf9e687c8a52fbe4a3641e9e3a1a477c78e
   ReactNativeDependencies: 0d64897719f9d8550ad337ed59e9e91b35c0de45
+  TrustWalletCore: da292cd60ebf6e5a82c605fae5efa14ef375e929
+  WalletCoreSwiftProtobuf: a4798576a2d309511fc45f81843d348732ec571d
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
-PODFILE CHECKSUM: 39c386d81c0dba823cfde011735747650c19b0c5
+PODFILE CHECKSUM: 5a55dd316fcfc67b318f40ca1c34b942d588810e
 
 COCOAPODS: 1.16.2

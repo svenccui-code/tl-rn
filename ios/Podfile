@@ -23,6 +23,13 @@ target 'TronLinkRN' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'TrustWalletCore'
+
+  target 'TronLinkRNTests' do
+    inherit! :search_paths
+    pod 'TrustWalletCore'
+  end
+
   post_install do |installer|
     react_native_post_install(
       installer,
