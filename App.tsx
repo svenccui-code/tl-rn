@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, Button, View } from 'react-native';
 import { runBridgeSelfTest, Line } from './src/devtools/BridgeSelfTest';
 import { runReadOnlySelfTest } from './src/devtools/ReadOnlySelfTest';
+import { runEvmSignSelfTest } from './src/devtools/EvmSignSelfTest';
 
 async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]) => void) {
   try {
@@ -20,9 +21,11 @@ async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]
 export default function App() {
   const [bridge, setBridge] = useState<Line[]>([]);
   const [readonly, setReadonly] = useState<Line[]>([]);
+  const [evmSign, setEvmSign] = useState<Line[]>([]);
   const runAll = () => {
     runAndLog('SELFTEST', runBridgeSelfTest, setBridge);
     runAndLog('READONLY', runReadOnlySelfTest, setReadonly);
+    runAndLog('EVMSIGN', runEvmSignSelfTest, setEvmSign);
   };
   useEffect(() => { runAll(); }, []);
   const render = (title: string, lines: Line[]) => (
@@ -38,7 +41,11 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1, padding: 16 }}>
       <Button title="Re-run" onPress={runAll} />
-      <ScrollView>{render('SecureKeyring', bridge)}{render('Read-only multichain', readonly)}</ScrollView>
+      <ScrollView>
+        {render('SecureKeyring', bridge)}
+        {render('Read-only multichain', readonly)}
+        {render('EVM sign golden', evmSign)}
+      </ScrollView>
     </SafeAreaView>
   );
 }
