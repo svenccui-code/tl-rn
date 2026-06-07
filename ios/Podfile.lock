@@ -2168,7 +2168,7 @@ SPEC CHECKSUMS:
   React-utils: 8d888b379f0808bfabaea03d85f9e8dd9b8548da
   React-webperformancenativemodule: c10016db7f1bb1153060d4aa9f7dbde2c88c845d
   ReactAppDependencyProvider: e96e93b493d8d86eeaee3e590ba0be53f6abe46f
-  ReactCodegen: 797de5178718324c6eba3327b07f9a423fbd5787
+  ReactCodegen: 1fd76f9a1aa9d1773312fe4dfe29c6609bcbb18d
   ReactCommon: 07572bf9e687c8a52fbe4a3641e9e3a1a477c78e
   ReactNativeDependencies: 0d64897719f9d8550ad337ed59e9e91b35c0de45
   TrustWalletCore: da292cd60ebf6e5a82c605fae5efa14ef375e929

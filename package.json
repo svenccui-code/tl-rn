@@ -37,5 +37,11 @@
   },
   "engines": {
     "node": ">= 22.11.0"
+  },
+  "codegenConfig": {
+    "name": "SecureKeyringSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/native-bridge",
+    "android": { "javaPackageName": "com.tronlinkrn.securekeyring" }
   }
 }
