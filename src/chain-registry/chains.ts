@@ -13,7 +13,7 @@ export const CHAINS: ChainConfig[] = [
   {
     caip2: 'eip155:1', coinType: 60, family: 'evm', name: 'Ethereum',
     nativeSymbol: 'ETH', decimals: 18,
-    rpc: { primary: 'https://eth.llamarpc.com', fallback: ['https://rpc.ankr.com/eth', 'https://cloudflare-eth.com'] },
+    rpc: { primary: 'https://ethereum.publicnode.com', fallback: ['https://eth.llamarpc.com', 'https://cloudflare-eth.com'] },
     explorerTx: 'https://etherscan.io/tx/',
     capabilities: { dapp: true, nft: true, defi: true },
   },

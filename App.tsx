@@ -1,38 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, Button, View } from 'react-native';
 import { runBridgeSelfTest, Line } from './src/devtools/BridgeSelfTest';
+import { runReadOnlySelfTest } from './src/devtools/ReadOnlySelfTest';
 
-async function runAndLog(setLines: (l: Line[]) => void) {
+async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]) => void) {
   try {
-    const lines = await runBridgeSelfTest();
-    setLines(lines);
+    const lines = await fn();
+    set(lines);
     const allOk = lines.every(l => l.ok);
-    console.log('SELFTEST_BEGIN');
-    lines.forEach(l => console.log(`SELFTEST_LINE ${l.ok ? 'PASS' : 'FAIL'} ${l.name} | ${l.detail}`));
-    console.log(`SELFTEST_RESULT=${allOk ? 'ALL_PASS' : 'FAIL'}`);
-    console.log('SELFTEST_END');
+    console.log(`${tag}_BEGIN`);
+    lines.forEach(l => console.log(`${tag}_LINE ${l.ok ? 'PASS' : 'FAIL'} ${l.name} | ${l.detail}`));
+    console.log(`${tag}_RESULT=${allOk ? 'ALL_PASS' : 'FAIL'}`);
+    console.log(`${tag}_END`);
   } catch (e) {
-    console.log(`SELFTEST_RESULT=ERROR ${String(e)}`);
+    console.log(`${tag}_RESULT=ERROR ${String(e)}`);
   }
 }
 
 export default function App() {
-  const [lines, setLines] = useState<Line[]>([]);
-  const allOk = lines.length > 0 && lines.every(l => l.ok);
-  useEffect(() => { runAndLog(setLines); }, []);
+  const [bridge, setBridge] = useState<Line[]>([]);
+  const [readonly, setReadonly] = useState<Line[]>([]);
+  const runAll = () => {
+    runAndLog('SELFTEST', runBridgeSelfTest, setBridge);
+    runAndLog('READONLY', runReadOnlySelfTest, setReadonly);
+  };
+  useEffect(() => { runAll(); }, []);
+  const render = (title: string, lines: Line[]) => (
+    <View>
+      <Text style={{ fontSize: 18, marginTop: 12 }}>
+        {title}: {lines.length === 0 ? '…' : lines.every(l => l.ok) ? '✅ ALL PASS' : '❌ FAIL'}
+      </Text>
+      {lines.map((l, i) => (
+        <Text key={i}>{l.ok ? '✅' : '❌'} {l.name}: {l.detail}</Text>
+      ))}
+    </View>
+  );
   return (
     <SafeAreaView style={{ flex: 1, padding: 16 }}>
-      <Button title="Run SecureKeyring Self-Test" onPress={() => runAndLog(setLines)} />
-      <Text style={{ fontSize: 22, marginVertical: 12 }}>
-        {lines.length === 0 ? '…' : allOk ? '✅ ALL PASS' : '❌ FAIL'}
-      </Text>
-      <ScrollView>
-        {lines.map((l, i) => (
-          <View key={i} style={{ paddingVertical: 4 }}>
-            <Text>{l.ok ? '✅' : '❌'} {l.name}: {l.detail}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      <Button title="Re-run" onPress={runAll} />
+      <ScrollView>{render('SecureKeyring', bridge)}{render('Read-only multichain', readonly)}</ScrollView>
     </SafeAreaView>
   );
 }
