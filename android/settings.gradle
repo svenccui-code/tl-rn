@@ -6,9 +6,12 @@ include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
 dependencyResolutionManagement {
+    // PREFER_PROJECT kept for React Native autolinked modules that declare their own repos.
+    // NOTE: under PREFER_PROJECT, React Native's project-level repositories take precedence and
+    // these settings repositories are bypassed for those projects; the GitHub Packages repo for
+    // wallet-core is therefore declared at project level in android/build.gradle (allprojects).
     repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
-        mavenLocal()
         google()
         mavenCentral()
     }

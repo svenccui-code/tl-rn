@@ -20,9 +20,25 @@ buildscript {
 
 apply plugin: "com.facebook.react.rootproject"
 
-// Add mavenLocal so the locally-built wallet-core AAR is resolvable
+// Resolve com.trustwallet:wallet-core from GitHub Packages (Trust Wallet's only distribution
+// channel for wallet-core; it is not on public Maven Central). Credentials come from
+// local.properties (git-ignored) on developer machines, or GPR_USER/GPR_KEY env vars on CI.
+// Declared at project level (allprojects) because the build uses RepositoriesMode.PREFER_PROJECT,
+// under which React Native's project repositories take precedence over settings-level ones.
+def gprProps = new Properties()
+def gprPropsFile = new File(rootDir, 'local.properties')
+if (gprPropsFile.exists()) { gprPropsFile.withInputStream { gprProps.load(it) } }
+def gprUser = gprProps.getProperty('gpr.user') ?: System.getenv('GPR_USER')
+def gprKey = gprProps.getProperty('gpr.key') ?: System.getenv('GPR_KEY')
+
 allprojects {
     repositories {
-        mavenLocal()
+        maven {
+            url = uri('https://maven.pkg.github.com/trustwallet/wallet-core')
+            credentials {
+                username = gprUser
+                password = gprKey
+            }
+        }
     }
 }
