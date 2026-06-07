@@ -47,4 +47,13 @@ describe('EvmSigningAdapter', () => {
     expect(body.method).toBe('eth_sendRawTransaction');
     expect(body.params).toEqual([EVM_GOLDEN.signedRawTx]);
   });
+
+  it('personalSign signs the EIP-191 hash and returns a v=27/28 signature', async () => {
+    const { personalSignHash } = require('../evm/message');
+    (SecureKeyring.signHash as jest.Mock).mockResolvedValue('0x' + 'ab'.repeat(32) + 'cd'.repeat(32) + '00');
+    const a = new EvmSigningAdapter(ETH);
+    const sig = await a.personalSign('hello tronlink', 'wref');
+    expect(SecureKeyring.signHash).toHaveBeenCalledWith('wref', 60, personalSignHash('hello tronlink'));
+    expect(sig.endsWith('1b')).toBe(true);
+  });
 });

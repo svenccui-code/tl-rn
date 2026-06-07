@@ -27,3 +27,9 @@ export function concatBytes(...arrays: Uint8Array[]): Uint8Array {
   for (const a of arrays) { out.set(a, off); off += a.length; }
   return out;
 }
+
+declare const TextEncoder: any;
+
+export function stringToUtf8Bytes(str: string): Uint8Array {
+  return new TextEncoder().encode(str);
+}

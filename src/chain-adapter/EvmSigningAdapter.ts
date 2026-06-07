@@ -4,6 +4,7 @@ import { jsonRpc } from '../net/jsonRpc';
 import { EvmAdapter } from './EvmAdapter';
 import type { SigningChainAdapter, TxRequest } from './signing-types';
 import { assembleSignedEip1559, eip1559SigningHash, UnsignedEvmTx } from '../evm/tx';
+import { personalSignHash, toEthSignatureV } from '../evm/message';
 
 export class EvmSigningAdapter extends EvmAdapter implements SigningChainAdapter {
   private chainId(): bigint { return BigInt(this.config.caip2.split(':')[1]); }
@@ -34,6 +35,11 @@ export class EvmSigningAdapter extends EvmAdapter implements SigningChainAdapter
 
   async broadcast(signedRawTx: string): Promise<string> {
     return jsonRpc(this.config.rpc, 'eth_sendRawTransaction', [signedRawTx]);
+  }
+
+  async personalSign(message: string, walletRef: string): Promise<string> {
+    const sig = await SecureKeyring.signHash(walletRef, this.config.coinType, personalSignHash(message));
+    return toEthSignatureV(sig);
   }
 }
 
