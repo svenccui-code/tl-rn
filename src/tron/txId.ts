@@ -1,11 +1,8 @@
-import { sha256 } from '@noble/hashes/sha2.js';
-import { hexToBytes } from '../crypto/bytes';
+import { utils } from 'tronweb';
 
-// TRON txID is the bare (no 0x) lowercase hex of sha256(raw_data bytes).
+// TRON txID = sha256(raw_data bytes), bare lowercase hex (no 0x prefix).
 export function tronTxId(rawDataHex: string): string {
-  const clean = rawDataHex.startsWith('0x') ? rawDataHex.slice(2) : rawDataHex;
-  const digest = sha256(hexToBytes('0x' + clean));
-  let s = '';
-  for (const b of digest) s += b.toString(16).padStart(2, '0');
-  return s;
+  const clean = rawDataHex.startsWith('0x') ? rawDataHex : '0x' + rawDataHex;
+  const h = utils.ethersUtils.sha256(clean); // returns '0x' + 64-char hex
+  return (h.startsWith('0x') ? h.slice(2) : h).toLowerCase();
 }
