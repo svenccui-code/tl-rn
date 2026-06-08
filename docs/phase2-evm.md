@@ -9,7 +9,9 @@ Phase 2 completes the **EVM write path**: a `SigningChainAdapter` (`buildTransac
 
 ## 1. Signing approach (and why)
 
-EVM transactions are assembled and **RLP/keccak-encoded in TypeScript**; only the 32-byte EIP-1559 signing hash crosses the bridge via the proven Phase-0 `SecureKeyring.signHash(walletRef, 60, hash)`, which returns a 65-byte `r||s||yParity` signature. The signed rawTx is assembled in TS.
+> **Update 2026-06-09:** the EVM encode / signing-hash / ABI / EIP-191 are now done with **viem** (not hand-rolled RLP/keccak) — see [`docs/library-adoption.md`](library-adoption.md). The flow and golden vectors below are unchanged; only the implementation moved to viem (`serializeTransaction`/`keccak256`/`encodeFunctionData`/`hashMessage`), with the native signature injected via `serializeTransaction(tx, { r, s, yParity })`.
+
+EVM transactions are assembled and **encoded via viem**; only the 32-byte EIP-1559 signing hash crosses the bridge via the proven Phase-0 `SecureKeyring.signHash(walletRef, 60, hash)`, which returns a 65-byte `r||s||yParity` signature. The signed rawTx is serialized by viem with the injected signature.
 
 - **Private key never leaves native** — `signHash` receives a public hash, returns a signature. (Architecture §5 mode-2 path, applied to EVM.)
 - **No native or codegen changes** — reuses the Phase-0 bridge as-is; lower risk, fully Jest-testable.

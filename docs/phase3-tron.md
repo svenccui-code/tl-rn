@@ -47,16 +47,13 @@ Adding more types (unfreeze/withdraw/delegate, etc.) = one more builder + a `sig
 
 Tests prove that a mismatched node txID or wrong contract type aborts BEFORE `signHash` is called.
 
-## 5. ⚠️ Known CRITICAL limitation (production gate — open)
+## 5. ✅ CLOSED — raw_data is built client-side (library adoption)
 
-`verifyTronTx` compares intent against the node's **decoded `raw_data` JSON**, not against a local protobuf decode of `raw_data_hex`. A fully malicious node could desynchronize `raw_data` (JSON) from `raw_data_hex` (the bytes that are actually signed): we recompute `txID = sha256(raw_data_hex)` (so we sign exactly those bytes) but we trust the node's JSON to describe them. **This was flagged CRITICAL by automated commit review and must be closed before production.**
+> **Closed on 2026-06-09** by the viem/tronweb retrofit — see [`docs/library-adoption.md`](library-adoption.md). This section's original concern (verifying intent against a node's `raw_data` JSON rather than the signed `raw_data_hex`) no longer applies.
 
-Closure options (architecture D6):
-- **(a)** Locally protobuf-decode `raw_data_hex` and run intent checks against the decoded structure; OR
-- **(b)** Reconstruct `raw_data_hex` from caller-supplied params and compare byte-for-byte; OR
-- **(c)** Use a trusted self-operated TRON node (so the JSON↔hex correspondence is trusted).
+The TRON write path now builds `raw_data` **client-side via `tronweb.transactionBuilder`** from our explicit params (chosen over a hand-rolled protobuf decoder). The signed bytes therefore encode our intent **by construction** — there is no node-provided `raw_data` to trust or decode. `verifyTronTx` reduces to the integrity invariant (`txID === sha256(raw_data_hex)`) as defense in depth before signing.
 
-The cheap hardenings (contract-type, fail-closed, sign-local-txID) are done; this trustless-decode item remains. Mitigation today: the bytes signed are integrity-checked (`txID==sha256(raw_data_hex)`) and the chosen RPC is TronGrid.
+Residual trust: tronweb's construction correctness (an established library, golden-vector + on-device validated) and the node's ref-block/timestamp (liveness only — does not affect where funds go). The earlier hand-rolled-protobuf-decode plan was dropped in favor of this library approach.
 
 ## 6. Exit criteria & evidence
 
