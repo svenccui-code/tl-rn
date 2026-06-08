@@ -12,43 +12,79 @@ const TRON: ChainConfig = {
 const FROM = 'TUEZSdKsoDHQMeZwihtdoBiN46zxhGWYdH';
 const TO = 'TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC';
 
-// A node 'created' tx whose txID matches sha256(raw_data_hex) and whose contract is a TransferContract.
+// Build a tx whose txID matches sha256(raw_data_hex) and contract type is TransferContract.
+// Used by verifyTronTx security gate inside TronSigningAdapter.
 const trxBuilt = (value: any) => ({
-  txID: TRON_GOLDEN.txId, raw_data_hex: TRON_GOLDEN.rawDataHex, visible: true,
+  txID: TRON_GOLDEN.txId,
+  raw_data_hex: TRON_GOLDEN.rawDataHex,
+  visible: true,
   raw_data: { contract: [{ type: 'TransferContract', parameter: { value } }] },
 });
 
+// Mock the tronweb build module so makeTronWeb() returns a fake instance
+// with a controllable transactionBuilder. This avoids real network calls.
+let mockSendTrx: jest.Mock;
+jest.mock('../tron/build', () => {
+  const actual = jest.requireActual('../tron/build');
+  return {
+    ...actual,
+    makeTronWeb: jest.fn(() => ({
+      transactionBuilder: {
+        get sendTrx() { return mockSendTrx; },
+      },
+    })),
+  };
+});
+
 describe('TronSigningAdapter', () => {
-  afterEach(() => (global.fetch as jest.Mock)?.mockReset?.());
+  afterEach(() => {
+    (global.fetch as jest.Mock)?.mockReset?.();
+    mockSendTrx?.mockReset?.();
+  });
 
   it('getTronSigningAdapter returns a TronSigningAdapter for tron', () => {
     expect(getTronSigningAdapter(TRON)).toBeInstanceOf(TronSigningAdapter);
   });
 
-  it('sendTrx: build -> verify -> sign(local txID) -> broadcast', async () => {
+  it('sendTrx: build (via tronweb) -> verify -> sign(local txID) -> broadcast', async () => {
     const value = { owner_address: FROM, to_address: TO, amount: 1000000 };
-    global.fetch = jest.fn()
-      .mockResolvedValueOnce({ ok: true, json: async () => trxBuilt(value) })                          // createtransaction
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ result: true, txid: TRON_GOLDEN.txId }) }); // broadcast
+    mockSendTrx = jest.fn(async () => trxBuilt(value));
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ result: true, txid: TRON_GOLDEN.txId }),
+    });
     (SecureKeyring.signHash as jest.Mock).mockResolvedValue('0x' + 'cd'.repeat(65));
     const a = new TronSigningAdapter(TRON);
     const txid = await a.sendTrx('wref', FROM, TO, 1000000n);
+    expect(mockSendTrx).toHaveBeenCalledWith(TO, 1000000, FROM);
     expect(SecureKeyring.signHash).toHaveBeenCalledWith('wref', 195, '0x' + TRON_GOLDEN.txId);
     expect(txid).toBe(TRON_GOLDEN.txId);
-    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[1][1].body).signature).toEqual(['cd'.repeat(65)]);
+    // broadcast fetch body should include signature
+    expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body).signature).toEqual(['cd'.repeat(65)]);
   });
 
-  it('SECURITY: aborts (no signHash, no broadcast) if node returns a mismatched txID', async () => {
-    const built = { txID: 'dead'.padEnd(64, '0'), raw_data_hex: TRON_GOLDEN.rawDataHex, visible: true, raw_data: { contract: [{ type: 'TransferContract', parameter: { value: { owner_address: FROM, to_address: TO, amount: 1000000 } } }] } };
-    global.fetch = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => built });
+  it('SECURITY: aborts (no signHash, no broadcast) if tronweb returns a mismatched txID', async () => {
+    const value = { owner_address: FROM, to_address: TO, amount: 1000000 };
+    mockSendTrx = jest.fn(async () => ({
+      ...trxBuilt(value),
+      txID: 'dead'.padEnd(64, '0'), // tampered txID — does not match sha256(raw_data_hex)
+    }));
+    global.fetch = jest.fn();
     const a = new TronSigningAdapter(TRON);
     await expect(a.sendTrx('wref', FROM, TO, 1000000n)).rejects.toThrow(/txID/i);
     expect(SecureKeyring.signHash).not.toHaveBeenCalled();
+    // broadcast must not be called
+    expect((global.fetch as jest.Mock).mock.calls.length).toBe(0);
   });
 
-  it('SECURITY: aborts if node returns the wrong contract type', async () => {
-    const built = { txID: TRON_GOLDEN.txId, raw_data_hex: TRON_GOLDEN.rawDataHex, visible: true, raw_data: { contract: [{ type: 'TriggerSmartContract', parameter: { value: { owner_address: FROM } } }] } };
-    global.fetch = jest.fn().mockResolvedValueOnce({ ok: true, json: async () => built });
+  it('SECURITY: aborts if tronweb returns the wrong contract type', async () => {
+    mockSendTrx = jest.fn(async () => ({
+      txID: TRON_GOLDEN.txId,
+      raw_data_hex: TRON_GOLDEN.rawDataHex,
+      visible: true,
+      raw_data: { contract: [{ type: 'TriggerSmartContract', parameter: { value: { owner_address: FROM } } }] },
+    }));
+    global.fetch = jest.fn();
     const a = new TronSigningAdapter(TRON);
     await expect(a.sendTrx('wref', FROM, TO, 1000000n)).rejects.toThrow(/contract type/i);
     expect(SecureKeyring.signHash).not.toHaveBeenCalled();

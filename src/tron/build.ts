@@ -1,10 +1,8 @@
-import { httpJson, withFailover } from '../net/http';
-import { tronAddressToHex } from './address';
+import { TronWeb } from 'tronweb';
 import type { Endpoints, TronUnsignedTx } from './types';
 
-// TronGrid amount fields are JSON numbers. Guard against silent precision loss:
-// values above Number.MAX_SAFE_INTEGER (~9.007e15 sun ≈ 9.007e9 TRX) cannot be
-// represented exactly as a JS number, so we reject rather than corrupt the amount.
+// Guard against silent precision loss when converting bigint sun amounts to JS number.
+// Values above Number.MAX_SAFE_INTEGER (~9.007e15 sun) cannot be represented exactly.
 function toSafeSunNumber(value: bigint): number {
   if (value < 0n) throw new Error(`negative amount: ${value}`);
   if (value > BigInt(Number.MAX_SAFE_INTEGER)) {
@@ -13,74 +11,52 @@ function toSafeSunNumber(value: bigint): number {
   return Number(value);
 }
 
-async function post(rpc: Endpoints, path: string, body: any): Promise<any> {
-  return withFailover(rpc, base =>
-    httpJson(`${base}${path}`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(body),
-    }),
-  );
+export function makeTronWeb(rpc: Endpoints): any {
+  return new TronWeb({ fullHost: rpc.primary });
 }
 
 export async function buildTrxTransfer(
-  rpc: Endpoints,
+  tw: any,
   from: string,
   to: string,
   amountSun: bigint,
 ): Promise<TronUnsignedTx> {
-  return post(rpc, '/wallet/createtransaction', {
-    owner_address: from,
-    to_address: to,
-    amount: toSafeSunNumber(amountSun),
-    visible: true,
-  });
-}
-
-// TRC-20 transfer(address,uint256). parameter = pad32(toAddr20) + pad32(amount).
-export function trc20TransferParameter(to: string, amount: bigint): string {
-  // Strip '41' prefix from tronAddressToHex to get 40-hex address (20 bytes)
-  const toHex40 = tronAddressToHex(to).slice(2);
-  // Left-pad address to 64 hex (32 bytes)
-  const addrWord = toHex40.padStart(64, '0');
-  // Left-pad amount to 64 hex (32 bytes)
-  const amountWord = amount.toString(16).padStart(64, '0');
-  return addrWord + amountWord;
+  return tw.transactionBuilder.sendTrx(to, toSafeSunNumber(amountSun), from);
 }
 
 export async function buildTrc20Transfer(
-  rpc: Endpoints,
+  tw: any,
   from: string,
   contract: string,
   to: string,
   amount: bigint,
 ): Promise<TronUnsignedTx> {
-  const res = await post(rpc, '/wallet/triggersmartcontract', {
-    owner_address: from,
-    contract_address: contract,
-    function_selector: 'transfer(address,uint256)',
-    parameter: trc20TransferParameter(to, amount),
-    fee_limit: 100000000,
-    call_value: 0,
-    visible: true,
-  });
-  if (!res?.transaction) {
-    throw new Error(`triggersmartcontract failed: ${JSON.stringify(res?.result ?? res)}`);
-  }
-  return res.transaction;
+  const { transaction } = await tw.transactionBuilder.triggerSmartContract(
+    contract,
+    'transfer(address,uint256)',
+    { feeLimit: 100_000_000, callValue: 0 },
+    [{ type: 'address', value: to }, { type: 'uint256', value: amount.toString() }],
+    from,
+  );
+  return transaction;
 }
 
-export async function buildFreezeV2(rpc: Endpoints, from: string, frozenSun: bigint, resource: 'ENERGY' | 'BANDWIDTH'): Promise<TronUnsignedTx> {
-  return post(rpc, '/wallet/freezebalancev2', {
-    owner_address: from, frozen_balance: toSafeSunNumber(frozenSun), resource, visible: true,
-  });
+export async function buildFreezeV2(
+  tw: any,
+  from: string,
+  frozenSun: bigint,
+  resource: 'ENERGY' | 'BANDWIDTH',
+): Promise<TronUnsignedTx> {
+  return tw.transactionBuilder.freezeBalanceV2(toSafeSunNumber(frozenSun), resource, from);
 }
 
 export interface VoteEntry { srAddress: string; voteCount: number; }
-export async function buildVote(rpc: Endpoints, from: string, votes: VoteEntry[]): Promise<TronUnsignedTx> {
-  return post(rpc, '/wallet/votewitnessaccount', {
-    owner_address: from,
-    votes: votes.map(v => ({ vote_address: v.srAddress, vote_count: v.voteCount })),
-    visible: true,
-  });
+export async function buildVote(
+  tw: any,
+  from: string,
+  votes: VoteEntry[],
+): Promise<TronUnsignedTx> {
+  const map: Record<string, number> = {};
+  for (const v of votes) map[v.srAddress] = v.voteCount;
+  return tw.transactionBuilder.vote(map, from);
 }
