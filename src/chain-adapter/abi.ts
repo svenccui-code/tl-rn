@@ -1,12 +1,12 @@
-// ERC-20 balanceOf(address) selector = keccak256("balanceOf(address)")[0:4].
-const BALANCE_OF_SELECTOR = '0x70a08231';
+import { encodeFunctionData, type Hex } from 'viem';
+
+const ERC20_BALANCE_OF = [{
+  name: 'balanceOf', type: 'function', stateMutability: 'view',
+  inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }],
+}] as const;
 
 export function erc20BalanceOfData(address: string): string {
-  const addr = address.toLowerCase().replace(/^0x/, '');
-  if (!/^[0-9a-f]{40}$/.test(addr)) {
-    throw new Error(`invalid EVM address: ${address}`);
-  }
-  return BALANCE_OF_SELECTOR + addr.padStart(64, '0');
+  return encodeFunctionData({ abi: ERC20_BALANCE_OF, functionName: 'balanceOf', args: [address as Hex] });
 }
 
 export function decodeUint256(hex: string): bigint {
