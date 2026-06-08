@@ -3,6 +3,7 @@ import { SafeAreaView, ScrollView, Text, Button, View } from 'react-native';
 import { runBridgeSelfTest, Line } from './src/devtools/BridgeSelfTest';
 import { runReadOnlySelfTest } from './src/devtools/ReadOnlySelfTest';
 import { runEvmSignSelfTest } from './src/devtools/EvmSignSelfTest';
+import { runTronSignSelfTest } from './src/devtools/TronSignSelfTest';
 
 async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]) => void) {
   try {
@@ -22,10 +23,12 @@ export default function App() {
   const [bridge, setBridge] = useState<Line[]>([]);
   const [readonly, setReadonly] = useState<Line[]>([]);
   const [evmSign, setEvmSign] = useState<Line[]>([]);
+  const [tronSign, setTronSign] = useState<Line[]>([]);
   const runAll = () => {
     runAndLog('SELFTEST', runBridgeSelfTest, setBridge);
     runAndLog('READONLY', runReadOnlySelfTest, setReadonly);
     runAndLog('EVMSIGN', runEvmSignSelfTest, setEvmSign);
+    runAndLog('TRONSIGN', runTronSignSelfTest, setTronSign);
   };
   useEffect(() => { runAll(); }, []);
   const render = (title: string, lines: Line[]) => (
@@ -45,6 +48,7 @@ export default function App() {
         {render('SecureKeyring', bridge)}
         {render('Read-only multichain', readonly)}
         {render('EVM sign golden', evmSign)}
+        {render('TRON sign golden', tronSign)}
       </ScrollView>
     </SafeAreaView>
   );
