@@ -2,6 +2,17 @@ import { httpJson, withFailover } from '../net/http';
 import { tronAddressToHex } from './address';
 import type { Endpoints, TronUnsignedTx } from './types';
 
+// TronGrid amount fields are JSON numbers. Guard against silent precision loss:
+// values above Number.MAX_SAFE_INTEGER (~9.007e15 sun ≈ 9.007e9 TRX) cannot be
+// represented exactly as a JS number, so we reject rather than corrupt the amount.
+function toSafeSunNumber(value: bigint): number {
+  if (value < 0n) throw new Error(`negative amount: ${value}`);
+  if (value > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new Error(`amount exceeds MAX_SAFE_INTEGER and cannot be sent safely: ${value}`);
+  }
+  return Number(value);
+}
+
 async function post(rpc: Endpoints, path: string, body: any): Promise<any> {
   return withFailover(rpc, base =>
     httpJson(`${base}${path}`, {
@@ -21,7 +32,7 @@ export async function buildTrxTransfer(
   return post(rpc, '/wallet/createtransaction', {
     owner_address: from,
     to_address: to,
-    amount: Number(amountSun),
+    amount: toSafeSunNumber(amountSun),
     visible: true,
   });
 }
@@ -61,7 +72,7 @@ export async function buildTrc20Transfer(
 
 export async function buildFreezeV2(rpc: Endpoints, from: string, frozenSun: bigint, resource: 'ENERGY' | 'BANDWIDTH'): Promise<TronUnsignedTx> {
   return post(rpc, '/wallet/freezebalancev2', {
-    owner_address: from, frozen_balance: Number(frozenSun), resource, visible: true,
+    owner_address: from, frozen_balance: toSafeSunNumber(frozenSun), resource, visible: true,
   });
 }
 
