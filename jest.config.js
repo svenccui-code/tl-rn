@@ -1,6 +1,9 @@
 module.exports = {
   preset: 'react-native',
   setupFiles: ['./jest.setup.js'],
+  // Reset mock call history between tests so not.toHaveBeenCalled() assertions
+  // are not polluted by invocations from a previous test case.
+  clearMocks: true,
   // Force Jest to exit after all tests complete, preventing async effects that
   // outlive the test (e.g. live network calls kicked off by App's useEffect)
   // from holding the process open or triggering "after teardown" log warnings.
