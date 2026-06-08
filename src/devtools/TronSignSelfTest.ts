@@ -1,6 +1,7 @@
+import { TronWeb } from 'tronweb';
 import SecureKeyring from '../native-bridge/NativeSecureKeyring';
 import { GOLDEN } from '../crypto/goldenVectors';
-import { buildTrxTransfer } from '../tron/build';
+import { buildTrxTransfer, makeTronWeb } from '../tron/build';
 import { tronTxId } from '../tron/txId';
 import type { Endpoints } from '../tron/types';
 
@@ -26,12 +27,18 @@ export async function runTronSignSelfTest(): Promise<Line[]> {
   const from = await SecureKeyring.deriveAddress(ref, 195);
   out.push({ name: 'derive TRON', ok: from === GOLDEN.tron.expectedAddress, detail: from });
 
-  // Real, read-only: createtransaction does NOT broadcast or cost anything.
-  const tx = await buildTrxTransfer(NILE_RPC, from, BURN_ADDR, 1000000n);
+  // Real, read-only: sendTrx does NOT broadcast or cost anything.
+  const tw = makeTronWeb(NILE_RPC);
+  const tx = await buildTrxTransfer(tw, from, BURN_ADDR, 1000000n);
   const localTxId = tronTxId(tx.raw_data_hex);
   out.push({ name: 'txID == sha256(raw_data_hex)', ok: localTxId === tx.txID, detail: tx.txID.slice(0, 16) + '…' });
 
-  const owner = tx.raw_data?.contract?.[0]?.parameter?.value?.owner_address;
+  // tronweb's transactionBuilder returns owner_address as hex (e.g. 41xxxx).
+  // Normalise to base58 before comparing with the derived address.
+  const ownerRaw = tx.raw_data?.contract?.[0]?.parameter?.value?.owner_address;
+  const owner = typeof ownerRaw === 'string' && ownerRaw.startsWith('41')
+    ? TronWeb.address.fromHex(ownerRaw)
+    : ownerRaw;
   out.push({ name: 'owner_address == golden', ok: owner === from, detail: String(owner) });
 
   const sig = await SecureKeyring.signHash(ref, 195, '0x' + localTxId); // sign the LOCAL txID
