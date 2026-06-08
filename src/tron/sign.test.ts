@@ -18,4 +18,10 @@ describe('signTronTx', () => {
     const signed = await signTronTxMulti(unsigned as any, ['w1', 'w2']);
     expect(signed.signature).toEqual(['11'.repeat(65), '22'.repeat(65)]);
   });
+  it('signs the LOCAL txID even if tx.txID is tampered', async () => {
+    (SecureKeyring.signHash as jest.Mock).mockResolvedValue('0x' + 'ab'.repeat(65));
+    const tampered = { txID: 'deadbeef'.padEnd(64, '0'), raw_data: {}, raw_data_hex: TRON_GOLDEN.rawDataHex, visible: true };
+    await signTronTx(tampered as any, 'wref');
+    expect(SecureKeyring.signHash).toHaveBeenCalledWith('wref', 195, '0x' + TRON_GOLDEN.txId); // local, not deadbeef
+  });
 });
