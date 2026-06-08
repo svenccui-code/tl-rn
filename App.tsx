@@ -4,6 +4,7 @@ import { runBridgeSelfTest, Line } from './src/devtools/BridgeSelfTest';
 import { runReadOnlySelfTest } from './src/devtools/ReadOnlySelfTest';
 import { runEvmSignSelfTest } from './src/devtools/EvmSignSelfTest';
 import { runTronSignSelfTest } from './src/devtools/TronSignSelfTest';
+import { runStateLayerSelfTest } from './src/devtools/StateLayerSelfTest';
 
 async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]) => void) {
   try {
@@ -24,11 +25,13 @@ export default function App() {
   const [readonly, setReadonly] = useState<Line[]>([]);
   const [evmSign, setEvmSign] = useState<Line[]>([]);
   const [tronSign, setTronSign] = useState<Line[]>([]);
+  const [stateLayer, setStateLayer] = useState<Line[]>([]);
   const runAll = () => {
     runAndLog('SELFTEST', runBridgeSelfTest, setBridge);
     runAndLog('READONLY', runReadOnlySelfTest, setReadonly);
     runAndLog('EVMSIGN', runEvmSignSelfTest, setEvmSign);
     runAndLog('TRONSIGN', runTronSignSelfTest, setTronSign);
+    runAndLog('STATELAYER', runStateLayerSelfTest, setStateLayer);
   };
   useEffect(() => { runAll(); }, []);
   const render = (title: string, lines: Line[]) => (
@@ -49,6 +52,7 @@ export default function App() {
         {render('Read-only multichain', readonly)}
         {render('EVM sign golden', evmSign)}
         {render('TRON sign golden', tronSign)}
+        {render('State layer (zustand/mitt)', stateLayer)}
       </ScrollView>
     </SafeAreaView>
   );

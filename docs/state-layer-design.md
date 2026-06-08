@@ -277,3 +277,28 @@ export const container = createContainer(); // App 启动时构造一次
 > **状态层 = Zustand Store（有状态，≈Controller）+ 无状态 Service（IO/编排，≈Service）+ 类型化 mitt EventBus（跨域通知，≈Messenger）+ container.ts（DI 装配，≈Engine init）。**
 > 借 MetaMask 的**单向数据流 + 单一所有权 + DI 装配 + UI 只读 selector**纪律；**不上** BaseController/受限 Messenger/Saga/Snaps。
 > 签名/广播继续复用现有 `chain-adapter`，Service 只编排不碰密码学。**先 Store→再 Service→最后 Bus，按需引入。**
+
+---
+
+## Status (2026-06-09): foundation built
+
+### Implemented
+
+- `EventBus` (`src/state/bus/eventBus.ts` + `events.ts`) — typed mitt pub/sub, 6 event types
+- Stores: `NetworkStore`, `AssetsStore`, `WalletStore`, `TxStore`
+- Services: `KeyringService`, `BalanceService`, `BroadcastService`, `TxStatusService`
+- `container.ts` — DI assembly: constructs all services, wires `tx/submitted → TxStatusService.track`
+
+### On-device verified (both platforms)
+
+Task 7 (`src/devtools/StateLayerSelfTest.ts`) ran an end-to-end round-trip probe in Hermes on both platforms with `STATELAYER_RESULT=ALL_PASS`:
+- Container constructs (zustand + mitt initialise in Hermes)
+- `KeyringService.importMnemonic` → bus delivers `wallet/added` event
+- `WalletStore.setWallet` write/read round-trip (3 chains, unlocked)
+- `BalanceService.refreshNative` → `AssetsStore` populated
+
+All 4 prior probes (SELFTEST / READONLY / EVMSIGN / TRONSIGN) remain `ALL_PASS` — no regression.
+
+### Deferred (per §7 YAGNI)
+
+`SettingsStore`, `DappStore`, `PriceService`, `DappRequestService`, `NodeService`, real `TxStatusService` polling loop, UI components.
