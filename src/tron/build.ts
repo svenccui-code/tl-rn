@@ -58,3 +58,18 @@ export async function buildTrc20Transfer(
   }
   return res.transaction;
 }
+
+export async function buildFreezeV2(rpc: Endpoints, from: string, frozenSun: bigint, resource: 'ENERGY' | 'BANDWIDTH'): Promise<TronUnsignedTx> {
+  return post(rpc, '/wallet/freezebalancev2', {
+    owner_address: from, frozen_balance: Number(frozenSun), resource, visible: true,
+  });
+}
+
+export interface VoteEntry { srAddress: string; voteCount: number; }
+export async function buildVote(rpc: Endpoints, from: string, votes: VoteEntry[]): Promise<TronUnsignedTx> {
+  return post(rpc, '/wallet/votewitnessaccount', {
+    owner_address: from,
+    votes: votes.map(v => ({ vote_address: v.srAddress, vote_count: v.voteCount })),
+    visible: true,
+  });
+}
