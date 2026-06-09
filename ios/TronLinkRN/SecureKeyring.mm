@@ -22,6 +22,12 @@ RCT_EXPORT_MODULE()
     return self;
 }
 
+- (void)createWallet:(RCTPromiseResolveBlock)resolve
+              reject:(RCTPromiseRejectBlock)reject {
+  NSDictionary *r = [_core createWallet];
+  r ? resolve(r) : reject(@"create_failed", @"could not create wallet", nil);
+}
+
 - (void)importMnemonic:(NSString *)mnemonic
                resolve:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {

@@ -5,6 +5,10 @@
  */
 
 const NativeSecureKeyring = {
+  createWallet: jest.fn(async () => ({
+    walletRef: 'mock-created-ref',
+    mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+  })),
   importMnemonic: jest.fn(async (_mnemonic: string): Promise<string> => 'mock-wallet-ref'),
   deleteWallet: jest.fn(async (_walletRef: string): Promise<boolean> => true),
   deriveAddress: jest.fn(async (_walletRef: string, _coinType: number): Promise<string> => '0xMockAddress'),

@@ -1,8 +1,12 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 
+export type CreatedWallet = { walletRef: string; mnemonic: string };
+
 // WalletRef = opaque handle/id, never contains a private key.
 export interface Spec extends TurboModule {
+  // Generate a brand-new HD wallet (fresh mnemonic) in native; mnemonic returned ONCE for backup.
+  createWallet(): Promise<CreatedWallet>;
   // Import mnemonic, hold HDWallet in native memory, return a handle.
   importMnemonic(mnemonic: string): Promise<string>;
   // Forget the in-memory wallet for a handle.

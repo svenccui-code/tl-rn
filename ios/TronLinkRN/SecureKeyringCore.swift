@@ -8,6 +8,13 @@ public class SecureKeyringCore: NSObject {
 
     private func coin(_ t: Int) -> CoinType? { CoinType(rawValue: UInt32(t)) }
 
+    @objc public func createWallet() -> [String: String]? {
+        guard let w = HDWallet(strength: 128, passphrase: "") else { return nil }
+        let ref = UUID().uuidString
+        lock.lock(); wallets[ref] = w; lock.unlock()
+        return ["walletRef": ref, "mnemonic": w.mnemonic]
+    }
+
     @objc public func importMnemonic(_ mnemonic: String) -> String? {
         guard let w = HDWallet(mnemonic: mnemonic, passphrase: "") else { return nil }
         let ref = UUID().uuidString

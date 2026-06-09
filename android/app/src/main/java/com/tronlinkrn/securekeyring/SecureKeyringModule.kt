@@ -44,6 +44,20 @@ class SecureKeyringModule(reactContext: ReactApplicationContext) :
 
     override fun getName() = NAME
 
+    override fun createWallet(promise: Promise) {
+        try {
+            val w = HDWallet(128, "")
+            val ref = UUID.randomUUID().toString()
+            wallets[ref] = w
+            val map = com.facebook.react.bridge.Arguments.createMap()
+            map.putString("walletRef", ref)
+            map.putString("mnemonic", w.mnemonic())
+            promise.resolve(map)
+        } catch (e: Throwable) {
+            promise.reject("create_failed", e)
+        }
+    }
+
     override fun importMnemonic(mnemonic: String, promise: Promise) {
         try {
             val wallet = HDWallet(mnemonic, "")
