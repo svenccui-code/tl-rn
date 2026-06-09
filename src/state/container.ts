@@ -34,3 +34,6 @@ export function createContainer(deps: ContainerDeps = {}) {
 
   return { keyring, balance, broadcast, txStatus };
 }
+
+// App-wide singleton, constructed once at module load. Screens import this.
+export const container = createContainer();
