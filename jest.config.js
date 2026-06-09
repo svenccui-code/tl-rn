@@ -12,6 +12,6 @@ module.exports = {
   watchman: false,
   // Allow @noble/hashes and react-native (ESM) to be transformed by Babel
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@noble)/)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@noble|@react-navigation)/)',
   ],
 };

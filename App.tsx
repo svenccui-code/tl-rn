@@ -1,59 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, Text, Button, View } from 'react-native';
-import { runBridgeSelfTest, Line } from './src/devtools/BridgeSelfTest';
-import { runReadOnlySelfTest } from './src/devtools/ReadOnlySelfTest';
-import { runEvmSignSelfTest } from './src/devtools/EvmSignSelfTest';
-import { runTronSignSelfTest } from './src/devtools/TronSignSelfTest';
-import { runStateLayerSelfTest } from './src/devtools/StateLayerSelfTest';
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { enableScreens } from 'react-native-screens';
+import type { RootStackParamList } from './src/navigation/types';
+import { WelcomeScreen } from './src/screens/welcome/WelcomeScreen';
+import { EmptyWalletScreen } from './src/screens/wallet/EmptyWalletScreen';
+import { DevSelfTestScreen } from './src/screens/dev/DevSelfTestScreen';
 
-async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]) => void) {
-  try {
-    const lines = await fn();
-    set(lines);
-    const allOk = lines.every(l => l.ok);
-    console.log(`${tag}_BEGIN`);
-    lines.forEach(l => console.log(`${tag}_LINE ${l.ok ? 'PASS' : 'FAIL'} ${l.name} | ${l.detail}`));
-    console.log(`${tag}_RESULT=${allOk ? 'ALL_PASS' : 'FAIL'}`);
-    console.log(`${tag}_END`);
-  } catch (e) {
-    console.log(`${tag}_RESULT=ERROR ${String(e)}`);
-  }
-}
+enableScreens();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [bridge, setBridge] = useState<Line[]>([]);
-  const [readonly, setReadonly] = useState<Line[]>([]);
-  const [evmSign, setEvmSign] = useState<Line[]>([]);
-  const [tronSign, setTronSign] = useState<Line[]>([]);
-  const [stateLayer, setStateLayer] = useState<Line[]>([]);
-  const runAll = () => {
-    runAndLog('SELFTEST', runBridgeSelfTest, setBridge);
-    runAndLog('READONLY', runReadOnlySelfTest, setReadonly);
-    runAndLog('EVMSIGN', runEvmSignSelfTest, setEvmSign);
-    runAndLog('TRONSIGN', runTronSignSelfTest, setTronSign);
-    runAndLog('STATELAYER', runStateLayerSelfTest, setStateLayer);
-  };
-  useEffect(() => { runAll(); }, []);
-  const render = (title: string, lines: Line[]) => (
-    <View>
-      <Text style={{ fontSize: 18, marginTop: 12 }}>
-        {title}: {lines.length === 0 ? '…' : lines.every(l => l.ok) ? '✅ ALL PASS' : '❌ FAIL'}
-      </Text>
-      {lines.map((l, i) => (
-        <Text key={i}>{l.ok ? '✅' : '❌'} {l.name}: {l.detail}</Text>
-      ))}
-    </View>
-  );
   return (
-    <SafeAreaView style={{ flex: 1, padding: 16 }}>
-      <Button title="Re-run" onPress={runAll} />
-      <ScrollView>
-        {render('SecureKeyring', bridge)}
-        {render('Read-only multichain', readonly)}
-        {render('EVM sign golden', evmSign)}
-        {render('TRON sign golden', tronSign)}
-        {render('State layer (zustand/mitt)', stateLayer)}
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Welcome" component={WelcomeScreen} />
+          <Stack.Screen name="EmptyWallet" component={EmptyWalletScreen} />
+          <Stack.Screen name="DevSelfTest" component={DevSelfTestScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
