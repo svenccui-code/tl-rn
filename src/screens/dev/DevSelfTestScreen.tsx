@@ -5,6 +5,7 @@ import { runReadOnlySelfTest } from '../../devtools/ReadOnlySelfTest';
 import { runEvmSignSelfTest } from '../../devtools/EvmSignSelfTest';
 import { runTronSignSelfTest } from '../../devtools/TronSignSelfTest';
 import { runStateLayerSelfTest } from '../../devtools/StateLayerSelfTest';
+import { runOnboardingSelfTest } from '../../devtools/OnboardingSelfTest';
 
 async function runAndLog(tag: string, fn: () => Promise<Line[]>, set: (l: Line[]) => void) {
   try {
@@ -26,12 +27,14 @@ export function DevSelfTestScreen() {
   const [evmSign, setEvmSign] = useState<Line[]>([]);
   const [tronSign, setTronSign] = useState<Line[]>([]);
   const [stateLayer, setStateLayer] = useState<Line[]>([]);
+  const [onboard, setOnboard] = useState<Line[]>([]);
   const runAll = () => {
     runAndLog('SELFTEST', runBridgeSelfTest, setBridge);
     runAndLog('READONLY', runReadOnlySelfTest, setReadonly);
     runAndLog('EVMSIGN', runEvmSignSelfTest, setEvmSign);
     runAndLog('TRONSIGN', runTronSignSelfTest, setTronSign);
     runAndLog('STATELAYER', runStateLayerSelfTest, setStateLayer);
+    runAndLog('ONBOARD', runOnboardingSelfTest, setOnboard);
   };
   useEffect(() => { runAll(); }, []);
   const render = (title: string, lines: Line[]) => (
@@ -53,6 +56,7 @@ export function DevSelfTestScreen() {
         {render('EVM sign golden', evmSign)}
         {render('TRON sign golden', tronSign)}
         {render('State layer (zustand/mitt)', stateLayer)}
+        {render('Onboarding (create/import)', onboard)}
       </ScrollView>
     </SafeAreaView>
   );
