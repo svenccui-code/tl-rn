@@ -37,18 +37,22 @@ App.tsx
          └─ "DevSelfTest" (dev only)                              ← DevSelfTestScreen (current App self-tests)
 ```
 
+Screens are organized **by business domain** under `src/screens/<domain>/`, mirroring the Android app's `com/tron/wallet/business/<domain>/` layout.
+
 | Unit | File | Responsibility |
 | --- | --- | --- |
 | App root | `App.tsx` | `SafeAreaProvider` + `NavigationContainer` + stack navigator |
-| Welcome screen | `src/screens/WelcomeScreen.tsx` | the pixel-identical welcome UI + the 1.1s timed `navigation.replace('EmptyWallet')` |
-| Empty-wallet placeholder | `src/screens/EmptyWalletScreen.tsx` | minimal stub (centered text "Create / Import Wallet — coming soon") + a small dev link to `DevSelfTest` |
-| Dev self-tests | `src/screens/DevSelfTestScreen.tsx` | the current `App.tsx` self-test probes (SELFTEST/READONLY/EVMSIGN/TRONSIGN/STATELAYER) moved verbatim |
+| Welcome screen | `src/screens/welcome/WelcomeScreen.tsx` | the pixel-identical welcome UI + the 1.1s timed `navigation.replace('EmptyWallet')` |
+| Empty-wallet placeholder | `src/screens/wallet/EmptyWalletScreen.tsx` | minimal stub (centered text "Create / Import Wallet — coming soon") + a small dev link to `DevSelfTest` |
+| Dev self-tests | `src/screens/dev/DevSelfTestScreen.tsx` | the current `App.tsx` self-test probes (SELFTEST/READONLY/EVMSIGN/TRONSIGN/STATELAYER) moved verbatim |
 | Logo asset | `assets/ic_launcher_pic.png` | copied from the Android `mipmap-xxhdpi` (the 3x source) |
+
+> Convention: one business domain = one folder under `src/screens/` (`welcome/`, `wallet/`, `dev/`, …). Future screens (onboarding, accounts, send, dapp, settings) each land in their domain folder.
 
 ## Pixel-fidelity details
 
 - **Background:** `#FFFFFF`, full screen (ignores safe-area insets so the white fills edge-to-edge, like the Android activity).
-- **Logo:** `<Image source={require('../../assets/ic_launcher_pic.png')} style={{ width: 227, height: 48 }} resizeMode="contain" />`. Using the single 681×144 (3x) source rendered into a 227×48 dp box yields a crisp 1:1 mapping on 3x devices and clean downscale on 1x/2x.
+- **Logo:** `<Image source={require('../../../assets/ic_launcher_pic.png')} style={{ width: 227, height: 48 }} resizeMode="contain" />` (from `src/screens/welcome/`, the asset is three levels up). Using the single 681×144 (3x) source rendered into a 227×48 dp box yields a crisp 1:1 mapping on 3x devices and clean downscale on 1x/2x.
 - **Vertical bias 0.4 (faithful):** a full-screen column container with `alignItems: 'center'` and three children — `<View style={{ flex: 0.4 }} />` (top spacer), the logo, `<View style={{ flex: 0.6 }} />` (bottom spacer). A 0.4 : 0.6 spacer ratio reproduces the ConstraintLayout `vertical_bias=0.4` exactly (top gap : bottom gap = 0.4 : 0.6).
 - **Status bar:** light content / default; the screen is white so a dark-content status bar is appropriate (match the Android `TYPE_NORMAL` look — white screen, dark icons).
 
