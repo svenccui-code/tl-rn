@@ -6,6 +6,9 @@ import { enableScreens } from 'react-native-screens';
 import type { RootStackParamList } from './src/navigation/types';
 import { WelcomeScreen } from './src/screens/welcome/WelcomeScreen';
 import { EmptyWalletScreen } from './src/screens/wallet/EmptyWalletScreen';
+import { CreateWalletScreen } from './src/screens/wallet/CreateWalletScreen';
+import { ImportWalletScreen } from './src/screens/wallet/ImportWalletScreen';
+import { WalletHomeScreen } from './src/screens/wallet/WalletHomeScreen';
 import { DevSelfTestScreen } from './src/screens/dev/DevSelfTestScreen';
 
 enableScreens();
@@ -18,6 +21,9 @@ export default function App() {
         <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="EmptyWallet" component={EmptyWalletScreen} />
+          <Stack.Screen name="CreateWallet" component={CreateWalletScreen} />
+          <Stack.Screen name="ImportWallet" component={ImportWalletScreen} />
+          <Stack.Screen name="WalletHome" component={WalletHomeScreen} />
           <Stack.Screen name="DevSelfTest" component={DevSelfTestScreen} />
         </Stack.Navigator>
       </NavigationContainer>
