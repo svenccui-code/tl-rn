@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- API 31+ (Android 12+): use the system SplashScreen API. -->
+    <!-- windowSplashScreenBackground: full-screen white. -->
+    <!-- windowSplashScreenAnimatedIcon: the TronLink icon square (icon-only, no text), -->
+    <!--   sized to fit safely inside the 160dp safe-zone circle. -->
+    <!-- windowSplashScreenBrandingImage: full-width TronLink banner shown at the bottom. -->
+    <style name="LaunchTheme" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/white</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_launcher_pic</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+</resources>
